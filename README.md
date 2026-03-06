@@ -1,65 +1,70 @@
-Real-Time Twitter Sentiment Analysis Pipeline
-This project implements a real-time data engineering pipeline to process and visualize sentiment trends from streaming text data. It uses a distributed architecture to handle high-velocity data with sub-2-second latency.
+# Real-Time Twitter Sentiment Analysis Pipeline
 
-Technical Stack
+## Overview
 
-Language: Python 
+This project implements a real-time data pipeline to analyze sentiment from streaming tweet-like text data. The system ingests high-velocity data, processes it using a distributed streaming framework, stores the results in a database, and visualizes sentiment trends through a live dashboard.
 
+The objective of this project is to demonstrate how modern data engineering tools can be combined to process and analyze streaming data in near real time.
 
-Streaming: Apache Kafka & Zookeeper 
+## Tech Stack
 
+* **Programming Language:** Python
+* **Streaming Platform:** Apache Kafka, Zookeeper
+* **Processing Engine:** Apache Spark (PySpark 3.2.4)
+* **Database:** MongoDB (NoSQL)
+* **Visualization:** Streamlit, Altair
+* **NLP Library:** VADER Sentiment Analysis
 
-Processing: Apache Spark (PySpark) 3.2.4 
+## System Architecture
 
+**1. Data Ingestion**
+A Python-based producer simulates live tweet streams and continuously publishes messages to an Apache Kafka topic.
 
-Database: MongoDB (NoSQL) 
+**2. Stream Processing**
+Apache Spark Structured Streaming consumes the Kafka stream and performs real-time sentiment classification using the VADER sentiment lexicon. Each tweet is categorized as **Positive**, **Negative**, or **Neutral**.
 
+**3. Data Storage**
+The processed results are written to a MongoDB collection, enabling efficient storage and fast retrieval for analytics.
 
-Visualization: Streamlit & Altair 
+**4. Data Visualization**
+A Streamlit dashboard queries MongoDB at regular intervals (every ~2 seconds) to display:
 
+* Live sentiment counts
+* Sentiment distribution charts
+* Streaming tweet data
 
-NLP: VADER Sentiment Analysis 
+## Performance Highlights
 
-System Architecture
+* **Low Latency:** End-to-end processing latency is typically under ~2 seconds for each micro-batch.
+* **Scalable Design:** Kafka and Spark provide a decoupled architecture that can scale horizontally with increasing data volume.
+* **Fault Tolerance:** Spark streaming checkpointing ensures recovery and reliability during failures.
 
-Data Ingestion: A Python-based producer generates synthetic tweet streams and transmits data to an Apache Kafka topic.
+## Installation and Usage
 
+1. Start **Zookeeper** and **Apache Kafka** services.
+2. Ensure **MongoDB** is running on the default port (`27017`).
+3. Install project dependencies:
 
-Stream Processing: Spark Structured Streaming consumes the Kafka feed, performing real-time sentiment classification (Positive, Negative, Neutral).
+```bash
+pip install -r requirements.txt
+```
 
+4. Run the Kafka producer:
 
-Data Persistence: Processed records are stored in a MongoDB collection for high-write throughput.
+```bash
+python producer.py
+```
 
+5. Start the Spark streaming job:
 
-Visualization: A Streamlit dashboard queries MongoDB at 2-second intervals to display live KPIs and sentiment distribution.
+```bash
+python spark_stream.py
+```
 
-Key Features
+6. Launch the Streamlit dashboard:
 
-Sub-2-Second Latency: Optimized for real-time micro-batch processing.
-
-
-Local Compatibility: Configured specifically for Spark 3.2.4 to ensure compatibility with Windows Hadoop utilities.
-
-
-Fault Tolerance: Utilizes a decoupled architecture for reliable data handling.
-
-Installation and Usage
-Start Zookeeper and Apache Kafka services.
-
-Ensure MongoDB is active on the default port (27017).
-
-Install dependencies:
-
-
-pip install -r requirements.txt 
-
-Run the components:
-
-
-python producer.py 
-
-
-python spark_stream.py 
-
-
+```bash
 streamlit run dashboard.py
+```
+
+Once the pipeline is running, the dashboard will automatically update as new data flows through the system.
